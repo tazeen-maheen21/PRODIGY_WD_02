@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimized Stopwatch</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'blue-gradient-start': '#3B82F6',
+                        'blue-gradient-end': '#1E40AF',
+                    }
+                }
+            }
+        }
+    </script>
+
+
+</head>
+<body class=" bg-gradient-to-t from-pink-200 to-fuchsia-400  flex flex-col items-center justify-center min-h-screen ">
+    <header class="text-center font-semibold mb-10">
+        <h1 class=" text-4xl text-[#FFFEFC]  ">
+            Stopwatch Web App
+        </h1>
+    </header>
+
+    <div class="bg-white bg-opacity-90 rounded-lg shadow-lg p-8 max-w-sm w-full text-center">
+        <h2 class="text-3xl font-bold mb-6 text-[#3a7ca5]">
+            Stopwatch
+        </h2>
+        <div id="display" class="text-4xl font-mono mb-6 text-blue-700 font-bold">00:00:00:000</div>
+        <div class="flex justify-center space-x-4 text-lg">
+            <button id="startBtn" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors duration-200">Start</button>
+            <button id="stopBtn" class="bg-blue-700 text-white py-2 px-4 rounded hover:bg-blue-800 transition-colors duration-200" disabled>Stop</button>
+            <button id="resetBtn" class="bg-blue-300 text-blue-800 py-2 px-4 rounded hover:bg-blue-400 transition-colors duration-200">Reset</button>
+        </div>
+    </div>
+
+    
+    
+
+    <script>
+        // Stopwatch functionality
+        let startTime, updatedTime, difference, tInterval, running = false;
+        const display = document.getElementById('display');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const resetBtn = document.getElementById('resetBtn');
+
+        // Format time to HH:MM:SS.mmm
+        function formatTime(time) {
+            let hours = Math.floor(time / 3600000);
+            let minutes = Math.floor((time % 3600000) / 60000);
+            let seconds = Math.floor((time % 60000) / 1000);
+            let milliseconds = time % 1000;
+
+            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}:${milliseconds.toString().padStart(3, '0')}`;
+        }
+
+        // Update timer display
+        function updateDisplay() {
+            updatedTime = new Date().getTime();
+            difference = updatedTime - startTime;
+            display.textContent = formatTime(difference);
+        }
+
+        // Start the timer
+        startBtn.addEventListener('click', function() {
+            if (!running) {
+                startTime = new Date().getTime() - (difference || 0);
+                tInterval = setInterval(updateDisplay, 10);
+                this.disabled = true;
+                stopBtn.disabled = false;
+                running = true;
+            }
+        });
+
+        // Stop the timer
+        stopBtn.addEventListener('click', function() {
+            if (running) {
+                clearInterval(tInterval);
+                this.disabled = true;
+                startBtn.disabled = false;
+                running = false;
+            }
+        });
+
+        // Reset the timer
+        resetBtn.addEventListener('click', function() {
+            clearInterval(tInterval);
+            display.textContent = '00:00:00:000';
+            difference = 0;
+            running = false;
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
+        });
+    </script>
+</body>
+</html>
